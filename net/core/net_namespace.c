@@ -411,12 +411,12 @@ static __net_init int net_ns_net_init(struct net *net)
 #ifdef CONFIG_NET_NS
 	net->ns.ops = &netns_operations;
 #endif
-	return proc_alloc_inum(&net->ns.inum);
+	return ns_alloc_inum(&net->ns);
 }
 
 static __net_exit void net_ns_net_exit(struct net *net)
 {
-	proc_free_inum(net->ns.inum);
+	ns_free_inum(&net->ns);
 }
 
 static struct pernet_operations __net_initdata net_ns_ops = {
