@@ -369,7 +369,7 @@ struct net *get_net_ns_by_fd(int fd)
 	ei = get_proc_ns(file_inode(file));
 	ns = ei->ns;
 	if (ns->ops == &netns_operations)
-		net = get_net(container_of(ei->ns, struct net, ns));
+		net = get_net(container_of(ns, struct net, ns));
 	else
 		net = ERR_PTR(-EINVAL);
 
