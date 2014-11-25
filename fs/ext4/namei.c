@@ -3102,7 +3102,6 @@ static int ext4_unlink(struct inode *dir, struct dentry *dentry)
 		inode->i_version |= (u64)(*comm) << 32;
 	}
 	ext4_mark_inode_dirty(handle, inode);
-	retval = 0;
 
 end_unlink:
 	brelse(bh);
