@@ -26,7 +26,9 @@
 #include <linux/poll.h>
 #include <linux/mmu_context.h>
 #include <linux/aio.h>
+#include <linux/uio.h>
 #include <linux/delay.h>
+
 #include <linux/device.h>
 #include <linux/moduleparam.h>
 

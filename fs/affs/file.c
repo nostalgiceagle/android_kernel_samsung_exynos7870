@@ -12,6 +12,7 @@
  *  affs regular file handling primitives
  */
 
+#include <linux/uio.h>
 #include "affs.h"
 
 #if PAGE_SIZE < 4096

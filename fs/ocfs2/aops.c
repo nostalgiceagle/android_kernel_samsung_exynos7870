@@ -28,6 +28,7 @@
 #include <linux/pipe_fs_i.h>
 #include <linux/mpage.h>
 #include <linux/quotaops.h>
+#include <linux/uio.h>
 
 #include <cluster/masklog.h>
 

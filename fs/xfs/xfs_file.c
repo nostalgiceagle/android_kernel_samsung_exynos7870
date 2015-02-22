@@ -40,7 +40,6 @@
 #include "xfs_dinode.h"
 #include "xfs_icache.h"
 
-#include <linux/aio.h>
 #include <linux/dcache.h>
 #include <linux/falloc.h>
 #include <linux/pagevec.h>
