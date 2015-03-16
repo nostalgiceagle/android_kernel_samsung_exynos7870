@@ -3241,7 +3241,7 @@ static ssize_t ext4_ext_direct_IO(int rw, struct kiocb *iocb,
 	BUG_ON(ext4_encrypted_inode(inode) && S_ISREG(inode->i_mode));
 #endif
 	if (IS_DAX(inode))
-		ret = dax_do_io(rw, iocb, inode, iter, offset, get_block_func,
+		ret = dax_do_io(iocb, inode, iter, offset, get_block_func,
 				ext4_end_io_dio, dio_flags);
 	else
 		ret = __blockdev_direct_IO(iocb, inode,
