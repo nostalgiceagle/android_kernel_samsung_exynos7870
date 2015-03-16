@@ -3028,8 +3028,7 @@ static inline loff_t fuse_round_up(loff_t off)
 }
 
 static ssize_t
-fuse_direct_IO(int rw, struct kiocb *iocb, struct iov_iter *iter,
-			loff_t offset)
+fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter, loff_t offset)
 {
 	ssize_t ret = 0;
 	struct file *file = iocb->ki_filp;

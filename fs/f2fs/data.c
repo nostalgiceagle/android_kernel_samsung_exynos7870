@@ -2524,7 +2524,7 @@ static int check_direct_IO(struct inode *inode, struct iov_iter *iter,
 	return 0;
 }
 
-static ssize_t f2fs_direct_IO(int rw, struct kiocb *iocb, struct iov_iter *iter,
+static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
 			      loff_t offset)
 {
 	struct address_space *mapping = iocb->ki_filp->f_mapping;

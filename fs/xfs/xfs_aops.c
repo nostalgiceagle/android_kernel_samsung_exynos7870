@@ -1511,7 +1511,6 @@ xfs_end_io_direct_write(
 
 STATIC ssize_t
 xfs_vm_direct_IO(
-	int			rw,
 	struct kiocb		*iocb,
 	struct iov_iter		*iter,
 	loff_t			offset)
