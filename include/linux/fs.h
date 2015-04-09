@@ -357,11 +357,14 @@ static inline bool is_sync_kiocb(struct kiocb *kiocb)
         return kiocb->ki_ctx == NULL;
 }
 
+static inline int iocb_flags(struct file *file);
+
 static inline void init_sync_kiocb(struct kiocb *kiocb, struct file *filp)
 {
         *kiocb = (struct kiocb) {
                         .ki_ctx = NULL,
                         .ki_filp = filp,
+			.ki_flags = iocb_flags(filp),
                         .ki_obj.tsk = current,
                 };
 }
@@ -2772,6 +2775,16 @@ extern void replace_mount_options(struct super_block *sb, char *options);
 static inline bool io_is_direct(struct file *filp)
 {
 	return (filp->f_flags & O_DIRECT) || IS_DAX(file_inode(filp));
+}
+
+static inline int iocb_flags(struct file *file)
+{
+	int res = 0;
+	if (file->f_flags & O_APPEND)
+		res |= IOCB_APPEND;
+	if (io_is_direct(file))
+		res |= IOCB_DIRECT;
+	return res;
 }
 
 static inline ino_t parent_ino(struct dentry *dentry)

@@ -1380,7 +1380,7 @@ static ssize_t fuse_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
 		goto out;
 	}
 
-	if (file->f_flags & O_DIRECT) {
+	if (iocb->ki_flags & O_DIRECT) {
 		written = generic_file_direct_write(iocb, from, pos);
 		if (written < 0 || !iov_iter_count(from))
 			goto out;
