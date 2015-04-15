@@ -66,6 +66,9 @@ static int cls_bpf_classify(struct sk_buff *skb, const struct tcf_proto *tp,
 	struct cls_bpf_prog *prog;
 	int ret;
 
+	if (unlikely(!skb_mac_header_was_set(skb)))
+		return -1;
+
 	list_for_each_entry_rcu(prog, &head->plist, link) {
 		int filter_res = BPF_PROG_RUN(prog->filter, skb);
 
