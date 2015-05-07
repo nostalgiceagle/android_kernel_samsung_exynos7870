@@ -125,14 +125,6 @@ static void *kernfs_iop_follow_link(struct dentry *dentry, struct nameidata *nd)
 	return NULL;
 }
 
-static void kernfs_iop_put_link(struct dentry *dentry, struct nameidata *nd,
-				void *cookie)
-{
-	char *page = nd_get_link(nd);
-	if (!IS_ERR(page))
-		free_page((unsigned long)page);
-}
-
 const struct inode_operations kernfs_symlink_iops = {
 	.setxattr	= kernfs_iop_setxattr,
 	.removexattr	= kernfs_iop_removexattr,
@@ -140,7 +132,7 @@ const struct inode_operations kernfs_symlink_iops = {
 	.listxattr	= kernfs_iop_listxattr,
 	.readlink	= generic_readlink,
 	.follow_link	= kernfs_iop_follow_link,
-	.put_link	= kernfs_iop_put_link,
+	.put_link	= free_page_put_link,
 	.setattr	= kernfs_iop_setattr,
 	.getattr	= kernfs_iop_getattr,
 	.permission	= kernfs_iop_permission,

@@ -295,19 +295,10 @@ static void *configfs_follow_link(struct dentry *dentry, struct nameidata *nd)
 	return NULL;
 }
 
-static void configfs_put_link(struct dentry *dentry, struct nameidata *nd,
-			      void *cookie)
-{
-	if (cookie) {
-		unsigned long page = (unsigned long)cookie;
-		free_page(page);
-	}
-}
-
 const struct inode_operations configfs_symlink_inode_operations = {
 	.follow_link = configfs_follow_link,
 	.readlink = generic_readlink,
-	.put_link = configfs_put_link,
+	.put_link = free_page_put_link,
 	.setattr = configfs_setattr,
 };
 
