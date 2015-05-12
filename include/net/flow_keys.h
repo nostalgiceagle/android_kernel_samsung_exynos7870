@@ -40,6 +40,9 @@ static inline __be32 skb_flow_get_ports(const struct sk_buff *skb, int thoff, u8
 	return __skb_flow_get_ports(skb, thoff, ip_proto, NULL, 0);
 }
 u32 flow_hash_from_keys(struct flow_keys *keys);
+u32 skb_get_poff(const struct sk_buff *skb);
+u32 __skb_get_poff(const struct sk_buff *skb, void *data,
+		   const struct flow_keys *keys, int hlen);
 unsigned int flow_get_hlen(const unsigned char *data, unsigned int max_len,
 			   __be16 protocol);
 #endif
