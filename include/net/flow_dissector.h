@@ -1,5 +1,5 @@
-#ifndef _NET_FLOW_KEYS_H
-#define _NET_FLOW_KEYS_H
+#ifndef _NET_FLOW_DISSECTOR_H
+#define _NET_FLOW_DISSECTOR_H
 
 /* struct flow_keys:
  *	@src: source ip address in case of IPv4
@@ -29,20 +29,28 @@ struct flow_keys {
 
 bool __skb_flow_dissect(const struct sk_buff *skb, struct flow_keys *flow,
 			void *data, __be16 proto, int nhoff, int hlen);
-static inline bool skb_flow_dissect(const struct sk_buff *skb, struct flow_keys *flow)
+
+static inline bool skb_flow_dissect(const struct sk_buff *skb,
+				    struct flow_keys *flow)
 {
 	return __skb_flow_dissect(skb, flow, NULL, 0, 0, 0);
 }
+
 __be32 __skb_flow_get_ports(const struct sk_buff *skb, int thoff, u8 ip_proto,
 			    void *data, int hlen_proto);
-static inline __be32 skb_flow_get_ports(const struct sk_buff *skb, int thoff, u8 ip_proto)
+
+static inline __be32 skb_flow_get_ports(const struct sk_buff *skb,
+					int thoff, u8 ip_proto)
 {
 	return __skb_flow_get_ports(skb, thoff, ip_proto, NULL, 0);
 }
+
 u32 flow_hash_from_keys(struct flow_keys *keys);
+
 u32 skb_get_poff(const struct sk_buff *skb);
 u32 __skb_get_poff(const struct sk_buff *skb, void *data,
 		   const struct flow_keys *keys, int hlen);
+
 unsigned int flow_get_hlen(const unsigned char *data, unsigned int max_len,
 			   __be16 protocol);
 #endif
