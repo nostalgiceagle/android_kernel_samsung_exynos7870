@@ -2074,7 +2074,7 @@ static int selinux_capable(const struct cred *cred, struct user_namespace *ns,
 #ifdef CONFIG_RKP_KDP
 	int rc;
 
-	return cred_has_capability(cred, cap, audit, ns == &init_user_ns);
+	return cred_has_capability(cred, cap, audit);
 }
 
 static int selinux_quotactl(int cmds, int type, int id, struct super_block *sb)
@@ -2151,7 +2151,7 @@ static int selinux_vm_enough_memory(struct mm_struct *mm, long pages)
 {
 	int rc, cap_sys_admin = 0;
 	rc = cred_has_capability(current_cred(), CAP_SYS_ADMIN,
-					SECURITY_CAP_NOAUDIT, true);
+					SECURITY_CAP_NOAUDIT);
 	if (rc == 0)
 		cap_sys_admin = 1;
 
