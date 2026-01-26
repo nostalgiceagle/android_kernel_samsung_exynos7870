@@ -62,6 +62,7 @@
 #include <linux/socket.h>
 #include <linux/file.h>
 #include <linux/net.h>
+#include <linux/aio.h>
 #include <linux/interrupt.h>
 #include <linux/thread_info.h>
 #include <linux/rcupdate.h>
