@@ -326,6 +326,8 @@ struct writeback_control;
 #define IOCB_APPEND		(1 << 1)
 #define IOCB_DIRECT		(1 << 2)
 
+typedef int (kiocb_cancel_fn)(struct kiocb *);
+
 struct kiocb {
         struct file             *ki_filp;
         struct kioctx           *ki_ctx;        /* NULL for sync ops */
