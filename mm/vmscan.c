@@ -924,7 +924,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
 		 */
 		mapping = page_mapping(page);
 		if ((mapping && bdi_write_congested(inode_to_bdi(mapping->host)) ||
-		    (writeback && PageReclaim(page)))
+		    (writeback && PageReclaim(page))))
 			nr_congested++;
 
 		/*
