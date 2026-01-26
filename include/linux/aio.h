@@ -2,6 +2,7 @@
 #define __LINUX__AIO_H
 
 #include <linux/aio_abi.h>
+#include <linux/fs.h>
 
 struct kioctx;
 struct kiocb;
