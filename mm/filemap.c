@@ -2294,6 +2294,7 @@ EXPORT_SYMBOL(read_cache_page_gfp);
  */
 inline int generic_write_checks(struct file *file, loff_t *pos, size_t *count, int isblk)
 {
+	struct kiocb *iocb;
 	struct inode *inode = file->f_mapping->host;
 	unsigned long limit = rlimit(RLIMIT_FSIZE);
 
@@ -2302,7 +2303,7 @@ inline int generic_write_checks(struct file *file, loff_t *pos, size_t *count, i
 
 	if (!isblk) {
 		/* FIXME: this is for backwards compatibility with 2.4 */
-		if (iocb->ki__flags & O_APPEND)
+		if (iocb->ki_flags & O_APPEND)
                         *pos = i_size_read(inode);
 
 		if (limit != RLIM_INFINITY) {
@@ -2588,6 +2589,7 @@ EXPORT_SYMBOL(generic_perform_write);
 ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
 {
 	struct file *file = iocb->ki_filp;
+	size_t count = iov_iter_count(from);
 	struct address_space * mapping = file->f_mapping;
 	struct inode 	*inode = mapping->host;
 	loff_t		pos = iocb->ki_pos;
