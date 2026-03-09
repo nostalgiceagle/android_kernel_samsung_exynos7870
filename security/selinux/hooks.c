@@ -2071,9 +2071,6 @@ static int selinux_capset(struct cred *new, const struct cred *old,
 static int selinux_capable(const struct cred *cred, struct user_namespace *ns,
 			   int cap, int audit)
 {
-#ifdef CONFIG_RKP_KDP
-	int rc;
-
 	return cred_has_capability(cred, cap, audit);
 }
 
