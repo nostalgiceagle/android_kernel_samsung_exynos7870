@@ -49,6 +49,25 @@ inline struct block_device *I_BDEV(struct inode *inode)
 }
 EXPORT_SYMBOL(I_BDEV);
 
+/*
+ * Move the inode from its current bdi to a new bdi.  Make sure the inode
+ * is clean before moving so that it doesn't linger on the old bdi.
+ */
+static void bdev_inode_switch_bdi(struct inode *inode,
+			struct backing_dev_info *dst)
+{
+	while (true) {
+		spin_lock(&inode->i_lock);
+		if (!(inode->i_state & I_DIRTY)) {
+			inode->i_data.backing_dev_info = dst;
+			spin_unlock(&inode->i_lock);
+			return;
+		}
+		spin_unlock(&inode->i_lock);
+		WARN_ON_ONCE(write_inode_now(inode, true));
+	}
+}
+
 /* Kill _all_ buffers and pagecache , dirty or not.. */
 void kill_bdev(struct block_device *bdev)
 {
@@ -558,6 +577,7 @@ struct block_device *bdget(dev_t dev)
 		inode->i_bdev = bdev;
 		inode->i_data.a_ops = &def_blk_aops;
 		mapping_set_gfp_mask(&inode->i_data, GFP_USER);
+		inode->i_data.backing_dev_info = &default_backing_dev_info;
 		spin_lock(&bdev_lock);
 		list_add(&bdev->bd_list, &all_bdevs);
 		spin_unlock(&bdev_lock);
@@ -1118,6 +1138,8 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
 		bdev->bd_queue = disk->queue;
 		bdev->bd_contains = bdev;
 		if (!partno) {
+			struct backing_dev_info *bdi;
+
 			ret = -ENXIO;
 			bdev->bd_part = disk_get_part(disk, partno);
 			if (!bdev->bd_part)
@@ -1143,8 +1165,11 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
 				}
 			}
 
-			if (!ret)
+			if (!ret) {
 				bd_set_size(bdev,(loff_t)get_capacity(disk)<<9);
+				bdi = blk_get_backing_dev_info(bdev);
+				bdev_inode_switch_bdi(bdev->bd_inode, bdi);
+			}
 
 			/*
 			 * If the device is invalidated, rescan partition
@@ -1171,6 +1196,8 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
 			if (ret)
 				goto out_clear;
 			bdev->bd_contains = whole;
+			bdev_inode_switch_bdi(bdev->bd_inode,
+				whole->bd_inode->i_data.backing_dev_info);
 			bdev->bd_part = disk_get_part(disk, partno);
 			if (!(disk->flags & GENHD_FL_UP) ||
 			    !bdev->bd_part || !bdev->bd_part->nr_sects) {
@@ -1210,6 +1237,7 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, int for_part)
 	bdev->bd_disk = NULL;
 	bdev->bd_part = NULL;
 	bdev->bd_queue = NULL;
+	bdev_inode_switch_bdi(bdev->bd_inode, &default_backing_dev_info);
 	if (bdev != bdev->bd_contains)
 		__blkdev_put(bdev->bd_contains, mode, 1);
 	bdev->bd_contains = NULL;
@@ -1432,6 +1460,8 @@ static void __blkdev_put(struct block_device *bdev, fmode_t mode, int for_part)
 		/* ->release can cause the old bdi to disappear,
 		 * so must switch it out first
 		 */
+		bdev_inode_switch_bdi(bdev->bd_inode,
+					&default_backing_dev_info);
 	}
 	if (bdev->bd_contains == bdev) {
 		if (disk->fops->release)
